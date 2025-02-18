@@ -1,0 +1,62 @@
+@startuml
+skinparam packageStyle rectangle
+
+package "AES Encryption Program" {
+
+    class Main {
+        - args : Namespace
+        --
+        + main(args)
+    }
+
+    class KeyManager {
+        - KEY_FILE : str = 'aes_key.key'
+        --
+        + generate_key() : None
+        + load_key() : bytes
+    }
+
+    class AESEncryptor {
+        --
+        + encrypt_file(input_file: str, output_file: str) : None
+        + decrypt_file(input_file: str, output_file: str) : None
+    }
+
+    class IntegrityChecker {
+        --
+        + calculate_hash(filename: str) : str
+        + verify_integrity(original_file: str, decrypted_file: str) : None
+    }
+
+    class argparse {
+        --
+        + ArgumentParser()
+    }
+
+    Main --> KeyManager : использует
+    Main --> AESEncryptor : использует
+    Main --> IntegrityChecker : использует
+    Main --> argparse : использует
+
+    AESEncryptor --> KeyManager : использует
+    AESEncryptor --> IntegrityChecker : использует
+    IntegrityChecker --> hashlib : использует
+    AESEncryptor --> Crypto.Cipher.AES : использует
+    KeyManager --> Crypto.Random.get_random_bytes : использует
+
+    note right of KeyManager
+      Управление генерацией и загрузкой ключа AES
+    end note
+
+    note right of AESEncryptor
+      Шифрование и дешифрование файлов с использованием AES
+    end note
+
+    note right of IntegrityChecker
+      Проверка целостности файлов через хеширование
+    end note
+}
+
+@enduml
+
+
